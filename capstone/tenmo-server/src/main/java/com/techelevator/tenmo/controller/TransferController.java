@@ -1,4 +1,56 @@
 package com.techelevator.tenmo.controller;
 
+
+import com.techelevator.tenmo.dao.TransferDAO;
+import com.techelevator.tenmo.dao.UserDao;
+import com.techelevator.tenmo.model.Transfers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@RestController
+@PreAuthorize("isAuthenticated()")
 public class TransferController {
+
+    @Autowired
+    private TransferDAO transferDAO;
+    @Autowired
+    private UserDao userDao;
+
+    public TransferController(TransferDAO transferDAO, UserDao userDao) {
+        this.transferDAO = transferDAO;
+        this.userDao = userDao;
+
+    }
+
+    @RequestMapping(value = "/account/transfer/{id}", method = RequestMethod.GET)
+    public List<Transfers> getAllMyTransfer(@PathVariable int id) {
+        return transferDAO.getAllTransfers(id);
+
+
+    }
+/*
+    @RequestMapping(path = "/transfer/{id}", method = RequestMethod.GET)
+    public Transfers getSelectedTransfer(@PathVariable int id) {
+        return transferDAO.getTransferById(id);
+
+
+    }
+
+    @RequestMapping(path = "/transfer", method = RequestMethod.POST)
+    public String sendTransfer(@RequestBody Transfers transfers) {
+        String result = transferDAO.sendTransfer(transfers.getAccountFrom(), transfers.getAccountTo(), transfers.getAmount());
+        return result;
+    }
+
+    @RequestMapping(path = "/request", method = RequestMethod.POST)
+    public String requestTransfer(@RequestBody Transfers transfers) {
+        String result = transferDAO.requestTransfer(transfers.getAccountFrom(), transfers.getAccountTo(), transfers.getAmount());
+        return result;
+    }
+}
+*/
 }

@@ -10,6 +10,11 @@ public class Transfers {
     private int accountTo;
     private BigDecimal amount;
 
+
+
+    //TODO add methods to update/set the transfer status
+
+
     public int getTransferId() {
         return transferId;
     }
