@@ -34,6 +34,21 @@ public class jdbcAccountDAO implements AccountDAO {
             }
         return balance;
     }
+    @Override
+    public BigDecimal getBalanceByAccount(int accountId) {
+        String sqlString = "SELECT balance FROM account WHERE account_id = ?";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sqlString, accountId);
+        BigDecimal balance = null;
+        //condition - no symbols or letter only numbers no special symbols
+        //can't write out the amount
+        results = jdbcTemplate.queryForRowSet(sqlString, accountId);
+        if (results.next()) {
+            balance = results.getBigDecimal("balance");
+        }
+        return balance;
+    }
+
+
 
     @Override
     public BigDecimal addToBalance(BigDecimal amountToAdd, int id) {
@@ -43,7 +58,7 @@ public class jdbcAccountDAO implements AccountDAO {
         //cant be a negative number
         BigDecimal newBalance = account.getBalance().add(amountToAdd);
         System.out.println("Your new balance is: " + newBalance);
-        String sqlString = "UPDATE account SET balance = ? WHERE user_id + ?";
+        String sqlString = "UPDATE account SET balance = ? WHERE user_id = ?";
         jdbcTemplate.update(sqlString, newBalance, id);
         return account.getBalance();
 }
@@ -59,7 +74,7 @@ public class jdbcAccountDAO implements AccountDAO {
         } else {
             BigDecimal newBalance = account.getBalance().subtract(amountToSubtract);
             System.out.println("Your new balance is: " + newBalance);
-            String sqlString = "UPDATE account SET balance = ? WHERE user_id + ?";
+            String sqlString = "UPDATE account SET balance = ? WHERE user_id = ?";
             jdbcTemplate.update(sqlString, newBalance, id);
         }
         return account.getBalance();
