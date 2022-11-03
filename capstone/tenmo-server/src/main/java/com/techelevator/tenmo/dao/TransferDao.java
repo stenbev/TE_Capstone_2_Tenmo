@@ -6,11 +6,11 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface TransferDAO {
-    public List<Transfer> getAllTransfers(int userId); //important Transfers getTransfersById(int transferId);
+    List<Transfer> getAllTransfers(int userId); //important Transfers getTransfersById(int transferId);
 
-    public Transfer getTransferById(int transactionId);  //imponrant
+    Transfer getTransferById(int transactionId);  //imponrant
 
-    public String sendTransfer(int userFrom, int userTo, BigDecimal amount); //important
+    String sendTransfer(int userFrom, int userTo, BigDecimal amount); //important
 
 
     //   public String requestTransfer(int userFrom, int userTo, BigDecimal amount); //not important

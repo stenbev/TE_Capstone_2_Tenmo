@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -26,13 +27,11 @@ public class AccountsController {
         this.accountDAO = accountDAO;
         this.userDao = userDao;
     }
-    @PreAuthorize("hasRole('USER')")
     @RequestMapping(path = "/balance/{id}", method = RequestMethod.GET)
-    public BigDecimal getBalance(@PathVariable int id) {
+    public BigDecimal getBalance (@PathVariable int id) {
         BigDecimal balance = accountDAO.getBalance(id);
         return balance;
     }
-
     @RequestMapping(path = "/listusers", method = RequestMethod.GET)
     public List<User> listUsers() {
         List<User> users = userDao.findAll();

@@ -24,21 +24,18 @@ public class TransferController {
         this.userDao = userDao;
 
     }
-
     @RequestMapping(value = "/account/transfer/{id}", method = RequestMethod.GET)
     public List<Transfer> getAllMyTransfer(@PathVariable int id) {
         return transferDAO.getAllTransfers(id);
 
 
     }
-
     @RequestMapping(path = "/transfer/{id}", method = RequestMethod.GET)
     public Transfer getSelectedTransfer(@PathVariable int id) {
         return transferDAO.getTransferById(id);
 
 
     }
-
     @RequestMapping(path = "/transfer", method = RequestMethod.POST)
     public String sendTransfer(@RequestBody Transfer transfers) {
         String result = transferDAO.sendTransfer(transfers.getAccountFrom(), transfers.getAccountTo(), transfers.getAmount());
