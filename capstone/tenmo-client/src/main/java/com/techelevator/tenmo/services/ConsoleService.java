@@ -18,6 +18,7 @@ public class ConsoleService {
         } catch (NumberFormatException e) {
             menuSelection = -1;
         }
+
         return menuSelection;
     }
 

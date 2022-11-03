@@ -28,12 +28,13 @@ public class jdbcAccountDAO implements AccountDAO {
         BigDecimal balance = null;
         //condition - no symbols or letter only numbers no special symbols
         //can't write out the amount
-            results = jdbcTemplate.queryForRowSet(sqlString, userId);
-            if (results.next()) {
-                balance = results.getBigDecimal("balance");
-            }
+        results = jdbcTemplate.queryForRowSet(sqlString, userId);
+        if (results.next()) {
+            balance = results.getBigDecimal("balance");
+        }
         return balance;
     }
+
     @Override
     public BigDecimal getBalanceByAccount(int accountId) {
         String sqlString = "SELECT balance FROM account WHERE account_id = ?";
@@ -49,7 +50,6 @@ public class jdbcAccountDAO implements AccountDAO {
     }
 
 
-
     @Override
     public BigDecimal addToBalance(BigDecimal amountToAdd, int id) {
         Account account = findAccountById(id);
@@ -58,18 +58,25 @@ public class jdbcAccountDAO implements AccountDAO {
         //cant be a negative number
         BigDecimal newBalance = account.getBalance().add(amountToAdd);
         System.out.println("Your new balance is: " + newBalance);
-        String sqlString = "UPDATE account SET balance = ? WHERE user_id = ?";
+        String sqlString = "UPDATE account SET balance = ? WHERE account_id = ?";
         jdbcTemplate.update(sqlString, newBalance, id);
-        return account.getBalance();
-}
+        return newBalance;
+    }
 
     @Override
     public BigDecimal subtractFromBalance(BigDecimal amountToSubtract, int id) {
         Account account = findAccountById(id);
+
+
+        BigDecimal newBalance = account.getBalance().subtract(amountToSubtract);
+        System.out.println("Your new balance is: " + newBalance);
+        String sqlString = "UPDATE account SET balance = ? WHERE account_id = ?";
+        jdbcTemplate.update(sqlString, newBalance, id);
+        return newBalance;
         //can't subtact more than your current balance
         //can't be 0 or negative
         //can't be letters
-        if (amountToSubtract.compareTo(account.getBalance()) == -1) {
+     /*   if (amountToSubtract.compareTo(account.getBalance()) == -1) {
             System.out.println("Error! Amount subtracted more than balance.");
         } else {
             BigDecimal newBalance = account.getBalance().subtract(amountToSubtract);
@@ -77,7 +84,7 @@ public class jdbcAccountDAO implements AccountDAO {
             String sqlString = "UPDATE account SET balance = ? WHERE user_id = ?";
             jdbcTemplate.update(sqlString, newBalance, id);
         }
-        return account.getBalance();
+        return account.getBalance(); */
     }
 
     @Override
@@ -105,6 +112,7 @@ public class jdbcAccountDAO implements AccountDAO {
             System.out.println("Account ID not found");
         return null;
     }
+
 
     private Account mapRowToAccount(SqlRowSet result) {
         Account account = new Account();

@@ -76,6 +76,24 @@ public class jdbcTransferDao implements TransferDAO {
         return "Transaction Failed";
     }
 
+    @Override
+public String requestTransfer(int userFrom, int userTo, BigDecimal amount){
+        if(userFrom == userTo){
+
+            return "Sorry, you cannot transfer money to yourself";
+        }
+        if(amount.compareTo(new BigDecimal(0)) == 1) {
+            String sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
+                             "  VALUES (1, 1, ?, ?, ?)";
+            jdbcTemplate.update(sql, userFrom, userTo, amount);
+            accountDAO.addToBalance(amount, userFrom);
+            accountDAO.subtractFromBalance(amount, userTo);
+            return "Transfer Request Sent";
+        }
+
+        return "Transaction Failed";
+    }
+
 
     private Transfer mapRowToTransfers(SqlRowSet result) {
         Transfer transfer = new Transfer();

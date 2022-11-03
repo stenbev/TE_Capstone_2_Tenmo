@@ -41,12 +41,11 @@ public class TransferController {
         String result = transferDAO.sendTransfer(transfers.getAccountFrom(), transfers.getAccountTo(), transfers.getAmount());
         return result;
     }
-/*
+
     @RequestMapping(path = "/request", method = RequestMethod.POST)
-    public String requestTransfer(@RequestBody Transfers transfers) {
-        String result = transferDAO.requestTransfer(transfers.getAccountFrom(), transfers.getAccountTo(), transfers.getAmount());
+    public String requestTransfer(@RequestBody Transfer transfers) {
+        String result = transferDAO.sendTransfer(transfers.getAccountFrom(), transfers.getAccountTo(), transfers.getAmount());
         return result;
     }
 }
-*/
-}
+
