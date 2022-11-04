@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-
 public class jdbcTransferDao implements TransferDAO {
 
     @Autowired
@@ -35,9 +34,41 @@ public class jdbcTransferDao implements TransferDAO {
         while (result.next()) {
             Transfer transfer = mapRowToTransfers(result);
             transfers.add(transfer);
-
         }
         return transfers;
+    }
+
+    @Override
+    public List<Transfer> getPendingTransfers(int userId) {
+        List<Transfer> transfers = new ArrayList<>();
+        String sql = "SELECT transfer.transfer_id, transfer.transfer_type_id, transfer.account_from, transfer.account_to, transfer.amount, account.account_id, account.user_id, account.balance, transfer.transfer_status_id, transfer_status.transfer_status_desc " +
+                "FROM transfer " +
+                "JOIN account ON account.account_id = transfer.account_from " +
+                "JOIN transfer_status ON transfer.transfer_status_id = transfer_status.transfer_status_id " +
+                "WHERE user_id = ? AND  transfer_status_desc = 'Pending' ;";
+        SqlRowSet result = jdbcTemplate.queryForRowSet(sql, userId);
+        while (result.next()) {
+            Transfer transfer = mapRowToTransfers(result);
+            transfers.add(transfer);
+        }
+        return transfers;
+    }
+
+    @Override
+    public String updateTransferRequest(Transfer transfer, int statusID) {
+        while (statusID == 3) {
+            String sql = "UPDATE transfer SET transfer_status_id = ? where transfer_id = ?; ";
+            jdbcTemplate.update(sql, statusID, transfer.getTransferId());
+            return "OK";
+        }
+        while (!(accountDAO.getBalance(transfer.getAccountFrom()).compareTo(transfer.getAmount()) == -1)) {
+            String sql = "UPDATE transfer SET transfer_status_id = ? where transfer_id = ?; ";
+            jdbcTemplate.update(sql, statusID, transfer.getTransferId());
+            accountDAO.addToBalance(transfer.getAmount(), transfer.getAccountTo());
+            accountDAO.subtractFromBalance(transfer.getAmount(), transfer.getAccountFrom());
+            return "Completed";
+        }
+        return "Count not update Transfer Request";
     }
 
     @Override
@@ -53,16 +84,30 @@ public class jdbcTransferDao implements TransferDAO {
 
         } else System.out.println("Transfer ID not found");
         return null;
+    }
 
+    @Override
+    public String requestTransfer(int userFrom, int userTo, BigDecimal amount) {
+        if (userFrom == userTo) {
+
+            return "Sorry, you cannot transfer money to yourself";
+        }
+        if (amount.compareTo(new BigDecimal(0)) == 1) {
+            String sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
+                    "  VALUES (1, 1, ?, ?, ?)";
+            jdbcTemplate.update(sql, userFrom, userTo, amount);
+            accountDAO.addToBalance(amount, userFrom);
+            accountDAO.subtractFromBalance(amount, userTo);
+            return "Transfer Request Sent";
+        }
+        return "Transaction Failed";
     }
 
     @Override
     public String sendTransfer(int userFrom, int userTo, BigDecimal amount) {
         if (userFrom == userTo) {
             return "Sorry, you cannot transfer money to yourself";
-
         }
-
         if (amount.compareTo(accountDAO.getBalanceByAccount(userFrom)) == -1 && amount.compareTo(new BigDecimal(0)) == 1) {
 
             String sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
@@ -70,30 +115,10 @@ public class jdbcTransferDao implements TransferDAO {
             jdbcTemplate.update(sql, userFrom, userTo, amount);
             accountDAO.addToBalance(amount, userTo);
             accountDAO.subtractFromBalance(amount, userFrom);
-
             return "Transfer Complete";
         }
         return "Transaction Failed";
     }
-
-    @Override
-public String requestTransfer(int userFrom, int userTo, BigDecimal amount){
-        if(userFrom == userTo){
-
-            return "Sorry, you cannot transfer money to yourself";
-        }
-        if(amount.compareTo(new BigDecimal(0)) == 1) {
-            String sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
-                             "  VALUES (1, 1, ?, ?, ?)";
-            jdbcTemplate.update(sql, userFrom, userTo, amount);
-            accountDAO.addToBalance(amount, userFrom);
-            accountDAO.subtractFromBalance(amount, userTo);
-            return "Transfer Request Sent";
-        }
-
-        return "Transaction Failed";
-    }
-
 
     private Transfer mapRowToTransfers(SqlRowSet result) {
         Transfer transfer = new Transfer();
@@ -106,6 +131,4 @@ public String requestTransfer(int userFrom, int userTo, BigDecimal amount){
         transfer.setTransferTypeId(result.getInt("transfer_type_id"));
         return transfer;
     }
-
-
 }

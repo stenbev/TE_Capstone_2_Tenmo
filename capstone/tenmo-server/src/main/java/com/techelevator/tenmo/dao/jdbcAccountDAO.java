@@ -6,7 +6,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 
 @Service
@@ -16,7 +15,6 @@ public class jdbcAccountDAO implements AccountDAO {
 
     public jdbcAccountDAO() {
     }
-
     public jdbcAccountDAO(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
@@ -49,7 +47,6 @@ public class jdbcAccountDAO implements AccountDAO {
         return balance;
     }
 
-
     @Override
     public BigDecimal addToBalance(BigDecimal amountToAdd, int id) {
         Account account = findAccountById(id);
@@ -73,18 +70,6 @@ public class jdbcAccountDAO implements AccountDAO {
         String sqlString = "UPDATE account SET balance = ? WHERE account_id = ?";
         jdbcTemplate.update(sqlString, newBalance, id);
         return newBalance;
-        //can't subtact more than your current balance
-        //can't be 0 or negative
-        //can't be letters
-     /*   if (amountToSubtract.compareTo(account.getBalance()) == -1) {
-            System.out.println("Error! Amount subtracted more than balance.");
-        } else {
-            BigDecimal newBalance = account.getBalance().subtract(amountToSubtract);
-            System.out.println("Your new balance is: " + newBalance);
-            String sqlString = "UPDATE account SET balance = ? WHERE user_id = ?";
-            jdbcTemplate.update(sqlString, newBalance, id);
-        }
-        return account.getBalance(); */
     }
 
     @Override
@@ -112,7 +97,6 @@ public class jdbcAccountDAO implements AccountDAO {
             System.out.println("Account ID not found");
         return null;
     }
-
 
     private Account mapRowToAccount(SqlRowSet result) {
         Account account = new Account();

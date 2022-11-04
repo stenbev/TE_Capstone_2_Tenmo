@@ -17,6 +17,7 @@ import java.util.List;
 @RestController
 @PreAuthorize("isAuthenticated()")
 public class AccountsController {
+
     @Autowired
     private AccountDAO accountDAO;
     @Autowired
@@ -26,8 +27,6 @@ public class AccountsController {
         this.accountDAO = accountDAO;
         this.userDao = userDao;
     }
-
-
     @RequestMapping(path = "/balance", method = RequestMethod.GET)
     public BigDecimal getBalance (Principal principal) {
         String userName = principal.getName();
