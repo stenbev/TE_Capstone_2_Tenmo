@@ -11,28 +11,14 @@ public class Transfer {
     private BigDecimal amount;
 
 
-
     //TODO add methods to update/set the transfer status
-
-
-    public int getTransferId() {
-        return transferId;
-    }
 
     public void setTransferId(int transferId) {
         this.transferId = transferId;
     }
 
-    public int getTransferTypeId() {
-        return transferTypeId;
-    }
-
     public void setTransferTypeId(int transferTypeId) {
         this.transferTypeId = transferTypeId;
-    }
-
-    public int getTransferStatusId() {
-        return transferStatusId;
     }
 
     public void setTransferStatusId(int transferStatusId) {

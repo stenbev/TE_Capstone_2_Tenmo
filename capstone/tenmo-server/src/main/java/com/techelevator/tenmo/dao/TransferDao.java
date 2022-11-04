@@ -13,6 +13,7 @@ public interface TransferDAO {
     String sendTransfer(int userFrom, int userTo, BigDecimal amount); //important
 
     String requestTransfer(int userFrom, int userTo, BigDecimal amount); //not important
+
 //    public List<Transfers> getPendingRequests(int userId); //not important
     //   public String updateTransfersRequest(Transfers transfer, int statusId);//not important
 }
