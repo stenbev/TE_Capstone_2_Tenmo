@@ -49,13 +49,20 @@ public class TransferController {
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(path = "/request", method = RequestMethod.POST)
     public String requestTransfer(@RequestBody Transfer transfers) {
-        String result = transferDAO.sendTransfer(transfers.getAccountFrom(), transfers.getAccountTo(), transfers.getAmount());
+        String result = transferDAO.requestTransfer(transfers.getAccountFrom(), transfers.getAccountTo(), transfers.getAmount());
         return result;
     }
 
     @RequestMapping(path = "transfer/status/{statusId}", method = RequestMethod.PUT)
     public String updateRequest(@RequestBody Transfer transfers, @PathVariable int statusId) {
         String result = transferDAO.updateTransferRequest(transfers, statusId);
+        return result;
+    }
+
+    @RequestMapping (path = "/transfer/pending", method = RequestMethod.GET)
+    public List<Transfer> getPendingTransfer(Principal principal){
+        String username = principal.getName();
+        List<Transfer> result = transferDAO.getPendingTransfers(userDao.findIdByUsername(username));
         return result;
     }
 }

@@ -56,9 +56,11 @@ public class jdbcTransferDao implements TransferDAO {
 
     @Override
     public String updateTransferRequest(Transfer transfer, int statusID) {
-        while (statusID == 3) {
+        while (statusID == 3 || statusID == 2)  {
             String sql = "UPDATE transfer SET transfer_status_id = ? where transfer_id = ?; ";
             jdbcTemplate.update(sql, statusID, transfer.getTransferId());
+            accountDAO.addToBalance(transfer.getAmount(), transfer.getAccountFrom());
+            accountDAO.subtractFromBalance(transfer.getAmount(), transfer.getAccountFrom());
             return "OK";
         }
         while (!(accountDAO.getBalance(transfer.getAccountFrom()).compareTo(transfer.getAmount()) == -1)) {
@@ -90,14 +92,13 @@ public class jdbcTransferDao implements TransferDAO {
     public String requestTransfer(int userFrom, int userTo, BigDecimal amount) {
         if (userFrom == userTo) {
 
-            return "Sorry, you cannot transfer money to yourself";
+            return "Sorry, you cannot request money from yourself.";
         }
         if (amount.compareTo(new BigDecimal(0)) == 1) {
             String sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
                     "  VALUES (1, 1, ?, ?, ?)";
             jdbcTemplate.update(sql, userFrom, userTo, amount);
-            accountDAO.addToBalance(amount, userFrom);
-            accountDAO.subtractFromBalance(amount, userTo);
+
             return "Transfer Request Sent";
         }
         return "Transaction Failed";
@@ -106,7 +107,7 @@ public class jdbcTransferDao implements TransferDAO {
     @Override
     public String sendTransfer(int userFrom, int userTo, BigDecimal amount) {
         if (userFrom == userTo) {
-            return "Sorry, you cannot transfer money to yourself";
+            return "Sorry, you cannot transfer money to yourself.";
         }
         if (amount.compareTo(accountDAO.getBalanceByAccount(userFrom)) == -1 && amount.compareTo(new BigDecimal(0)) == 1) {
 
