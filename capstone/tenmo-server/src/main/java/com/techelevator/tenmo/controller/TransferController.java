@@ -33,10 +33,9 @@ public class TransferController {
         return result;
     }
 
-    @RequestMapping(path = "/transfer", method = RequestMethod.GET)
-    public Transfer getSelectedTransfer(Principal principal) {
-        String userName = principal.getName();
-        Transfer transfer = transferDAO.getTransferById(userDao.findIdByUsername(userName));
+    @RequestMapping(path = "/transfer/{id}", method = RequestMethod.GET)
+    public Transfer getSelectedTransfer(@PathVariable int id) {
+        Transfer transfer = transferDAO.getTransferById(id);
         return transfer;
     }
 
@@ -55,8 +54,8 @@ public class TransferController {
     }
 
     @RequestMapping(path = "transfer/status/{statusId}", method = RequestMethod.PUT)
-    public String updateRequest(@RequestBody Transfer transfers, @PathVariable int statusID) {
-        String result = transferDAO.updateTransferRequest(transfers, statusID);
+    public String updateRequest(@RequestBody Transfer transfers, @PathVariable int statusId) {
+        String result = transferDAO.updateTransferRequest(transfers, statusId);
         return result;
     }
 }
