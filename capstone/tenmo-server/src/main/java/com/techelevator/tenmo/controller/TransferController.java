@@ -1,5 +1,6 @@
 package com.techelevator.tenmo.controller;
 
+import com.techelevator.tenmo.dao.AccountDAO;
 import com.techelevator.tenmo.dao.TransferDAO;
 import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.model.Transfer;
@@ -21,11 +22,6 @@ public class TransferController {
     @Autowired
     private UserDao userDao;
 
-    public TransferController(TransferDAO transferDAO, UserDao userDao) {
-        this.transferDAO = transferDAO;
-        this.userDao = userDao;
-    }
-
     @RequestMapping(value = "/account/transfer", method = RequestMethod.GET)
     public List<Transfer> getAllMyTransfer(Principal principal) {
         String userName = principal.getName();
@@ -43,6 +39,9 @@ public class TransferController {
     @RequestMapping(path = "/transfer", method = RequestMethod.POST)
     public String sendTransfer(@RequestBody Transfer transfers) {
         String result = transferDAO.sendTransfer(transfers.getAccountFrom(), transfers.getAccountTo(), transfers.getAmount());
+        AccountDAO accountDAO = null;
+        accountDAO.addToBalance(transfers.getAmount(), transfers.getAccountTo());
+        accountDAO.subtractFromBalance(transfers.getAmount(), transfers.getAccountFrom());
         return result;
     }
 

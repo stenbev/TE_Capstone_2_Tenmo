@@ -114,8 +114,6 @@ public class jdbcTransferDao implements TransferDAO {
             String sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
                     "VALUES (2, 2, ?, ?, ?)";
             jdbcTemplate.update(sql, userFrom, userTo, amount);
-            accountDAO.addToBalance(amount, userTo);
-            accountDAO.subtractFromBalance(amount, userFrom);
             return "Transfer Complete";
         }
         return "Transaction Failed";

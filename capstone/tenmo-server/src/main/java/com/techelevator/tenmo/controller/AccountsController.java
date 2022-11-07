@@ -23,10 +23,6 @@ public class AccountsController {
     @Autowired
     private UserDao userDao;
 
-    public AccountsController(AccountDAO accountDAO, UserDao userDao) {
-        this.accountDAO = accountDAO;
-        this.userDao = userDao;
-    }
     @RequestMapping(path = "/balance", method = RequestMethod.GET)
     public BigDecimal getBalance (Principal principal) {
         String userName = principal.getName();
